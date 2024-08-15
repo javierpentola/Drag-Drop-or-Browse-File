@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload with Drag & Drop or Browse</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: #5256ad;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+        .upload-container {
+            width: 700px;
+            height: 500px;
+            border-radius: 5px;
+            border: 2px dashed #fff;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            text-align: center;
+        }
+        .upload-container.active {
+            border-style: solid;
+        }
+        .upload-container .icon {
+            font-size: 100px;
+            color: #5256ad;
+        }
+        .upload-container h1 {
+            font-size: 30px;
+            color: #5256ad;
+            margin: 10px 0;
+        }
+        .upload-container p {
+            font-size: 25px;
+            color: #5256ad;
+            margin: 10px 0;
+        }
+        .upload-container button {
+            padding: 10px 25px;
+            font-size: 20px;
+            color: #5256ad;
+            background: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .upload-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        input[type="file"] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="upload-container">
+        <div class="icon">
+            <i class="fas fa-cloud-upload-alt"></i>
+        </div>
+        <h1>Drag & Drop to Upload File</h1>
+        <p>OR</p>
+        <button id="browseBtn">Browse File</button>
+        <input type="file" id="fileInput">
+    </div>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script>
+        const container = document.querySelector('.upload-container');
+        const fileInput = document.getElementById('fileInput');
+        const browseBtn = document.getElementById('browseBtn');
+        const header = container.querySelector('h1');
+        const validTypes = ['image/jpeg', 'image/png'];
+
+        browseBtn.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            handleFile(e.target.files[0]);
+        });
+
+        container.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            container.classList.add('active');
+            header.textContent = 'Release to Upload File';
+        });
+
+        container.addEventListener('dragleave', () => {
+            container.classList.remove('active');
+            header.textContent = 'Drag & Drop to Upload File';
+        });
+
+        container.addEventListener('drop', (e) => {
+            e.preventDefault();
+            handleFile(e.dataTransfer.files[0]);
+        });
+
+        function handleFile(file) {
+            if (validTypes.includes(file.type)) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    container.innerHTML = `<img src="${reader.result}" alt="Uploaded File">`;
+                };
+                reader.readAsDataURL(file);
+                container.classList.remove('active');
+                header.textContent = 'Drag & Drop to Upload File';
+            } else {
+                alert('This is not a valid image file!');
+                container.classList.remove('active');
+                header.textContent = 'Drag & Drop to Upload File';
+            }
+        }
+    </script>
+</body>
+</html>
